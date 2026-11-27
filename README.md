@@ -6,6 +6,8 @@ SquadTimer wurde mit KI-Unterstützung entwickelt.
 
 **Du möchtest SquadTimer einfach benutzen?** Zur [Windows-Installation Schritt für Schritt](INSTALLATION.md) und zum [fertigen Download](https://github.com/buzzibaer/SquadTimer/releases/latest).
 
+**Voraussetzung für das Windows-Paket:** [Docker Desktop für Windows herunterladen](https://docs.docker.com/desktop/setup/install/windows-install/), installieren und vor SquadTimer starten.
+
 ## Architektur und Funktionsweise
 
 ```text

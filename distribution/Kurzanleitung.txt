@@ -3,9 +3,11 @@ SquadTimer – Installation unter Windows
 
 Vor dem Start
 -------------
-Du brauchst einen x64-Windows-PC und Docker Desktop im Linux-Container-Modus.
-Falls Docker Desktop noch fehlt:
+Docker Desktop für Windows muss installiert sein und laufen, sonst kann
+SquadTimer nicht starten. Du brauchst die x86_64-Version für einen x64-PC.
+Offizieller Download und Installationsanleitung von Docker:
 https://docs.docker.com/desktop/setup/install/windows-install/
+Lass Docker Desktop im Standardmodus für Linux-Container laufen.
 
 Die Docker-Images sind im öffentlichen Windows-ZIP enthalten. Ein GitHub-Konto
 oder eine Registry-Anmeldung ist für dieses Paket nicht nötig. Squad muss beim

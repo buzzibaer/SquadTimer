@@ -2,9 +2,11 @@
 
 SquadTimer läuft auf dem PC, auf dem du Squad spielst. Du startest es per Doppelklick und verwendest es im Browser.
 
+> **Voraussetzung: Docker Desktop für Windows muss installiert sein und laufen.** [Docker Desktop für Windows (x86_64) herunterladen – offizielle Docker-Seite](https://docs.docker.com/desktop/setup/install/windows-install/).
+
 ## Was du vorher brauchst
 
-- **Einen Windows-PC mit x64-Prozessor**, auf dem [Docker Desktop für Windows](https://docs.docker.com/desktop/setup/install/windows-install/) läuft. Falls Docker Desktop noch fehlt, installiere es nach der Anleitung von Docker. Folge den Hinweisen zu WSL 2 und einem Neustart, falls der Installer sie anzeigt. Lass Docker Desktop im Standardmodus für Linux-Container laufen.
+- **Einen Windows-PC mit x64-Prozessor.** Wähle auf der Docker-Seite den Download **„Docker Desktop for Windows – x86_64“** und führe die Installationsdatei aus. Folge den Hinweisen zu WSL 2 und einem Neustart, falls der Installer sie anzeigt. Lass Docker Desktop im Standardmodus für Linux-Container laufen.
 - **Internet zum Herunterladen des ZIPs.** Die fertigen Docker-Images sind im ZIP enthalten. Du brauchst weder ein GitHub-Konto noch eine Anmeldung bei einer Docker-Registry.
 - **Einen freien lokalen Port 8080.** Wenn dort bereits eine andere Anwendung läuft, meldet der Starter das. Squad selbst muss zum Starten von SquadTimer nicht geöffnet sein.
 
