@@ -4,6 +4,8 @@ SquadTimer ist eine deutschsprachige, installierbare Web-App für Handy, Tablet 
 
 SquadTimer wurde mit KI-Unterstützung entwickelt.
 
+**Du möchtest SquadTimer einfach benutzen?** Zur [Windows-Installation Schritt für Schritt](INSTALLATION.md) und zum [fertigen Download](https://github.com/buzzibaer/SquadTimer/releases/latest).
+
 ## Architektur und Funktionsweise
 
 ```text

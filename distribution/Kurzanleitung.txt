@@ -1,23 +1,33 @@
-SquadTimer für Windows – Kurzanleitung
+SquadTimer – Installation unter Windows
+======================================
 
-Voraussetzung: Docker Desktop für Windows (Linux-Container) installieren und starten.
-SquadTimer läuft nur auf diesem PC und ist unter http://127.0.0.1:8080 erreichbar.
+Vor dem Start
+-------------
+Du brauchst einen x64-Windows-PC und Docker Desktop im Linux-Container-Modus.
+Falls Docker Desktop noch fehlt:
+https://docs.docker.com/desktop/setup/install/windows-install/
 
-1. ZIP in einen beliebigen Ordner entpacken.
-2. „SquadTimer starten.cmd“ doppelklicken. Beim ersten Start importiert Docker
-   die mitgelieferten Images. Eine GitHub-Anmeldung ist dafür nicht nötig.
-3. Ist der Squad-Logordner vorhanden, startet die Match-Erkennung automatisch.
-   Andernfalls läuft die App manuell; beim nächsten Start wird erneut geprüft.
-4. Zum Beenden „SquadTimer stoppen.cmd“ doppelklicken.
+Die Docker-Images sind im öffentlichen Windows-ZIP enthalten. Ein GitHub-Konto
+oder eine Registry-Anmeldung ist für dieses Paket nicht nötig. Squad muss beim
+Start der App nicht geöffnet sein. Der lokale Port 8080 muss frei sein.
 
-Bei privaten Test-Releases brauchst du Zugriff auf beide GitHub-Pakete.
-Melde Docker einmal bei ghcr.io an, bevor du den Starter verwendest:
-`docker login ghcr.io` (GitHub-Benutzername und ein Token mit `read:packages`).
+Schritt für Schritt
+-------------------
+1. Öffne Docker Desktop und warte, bis es bereit ist.
+2. Lade unter https://github.com/buzzibaer/SquadTimer/releases/latest
+   das Windows-ZIP aus dem Bereich „Assets“ herunter, falls es dir noch fehlt.
+3. Rechtsklick auf das ZIP → „Alle extrahieren…“. Öffne den entpackten Ordner.
+4. Doppelklicke auf „SquadTimer starten.cmd“. Lass das Startfenster offen,
+   bis sich der Browser öffnet. Der erste Start kann etwas länger dauern.
+5. Falls sich kein Browser öffnet, rufe http://127.0.0.1:8080 auf. Zeigt das
+   Startfenster einen Fehler, behebe diesen zuerst.
 
-Die optionale Erkennung liest SquadGame.log nur lesend aus
-%LOCALAPPDATA%\SquadGame\Saved\Logs. Ist der Ordner vorhanden, der Log aber noch
-nicht, wartet die Erkennung auf die Datei. Ohne Erkennung Layer manuell wählen.
+Ist der Squad-Logordner vorhanden, kann die App Karte und Layer automatisch
+erkennen. Sonst kannst du sie manuell wählen. Legt Squad den Ordner erst
+später an, starte SquadTimer erneut.
 
-Port 8080 muss frei sein. Die App bindet ausschließlich an 127.0.0.1 und ist
-nicht im Netzwerk erreichbar. Zum Aktualisieren die neue ZIP in einen neuen
-Ordner entpacken; die Erkennung wird bei jedem Start automatisch geprüft.
+Zum Beenden: „SquadTimer stoppen.cmd“ doppelklicken. Deine Runde bleibt im
+selben Browserprofil gespeichert.
+
+Ausführliche Anleitung und Fehlerhilfe:
+https://github.com/buzzibaer/SquadTimer/blob/main/INSTALLATION.md
