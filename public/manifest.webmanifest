@@ -1,0 +1,11 @@
+{
+  "name": "SquadTimer",
+  "short_name": "SquadTimer",
+  "description": "Manuelle Fahrzeugtimer für Squad",
+  "lang": "de",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111916",
+  "theme_color": "#17221d",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

@@ -1,0 +1,47 @@
+{
+  "source": "https://squadmaps.com/",
+  "retrievedAt": "2026-11-24T15:22:49.813Z",
+  "sourceSha256": "edde301f9a0002aea8f0605fb9560e8f490d6f563ab659223dba4230ab02adf8",
+  "maps": [
+    "Al Basrah",
+    "Anvil",
+    "Belaya Pass",
+    "Black Coast",
+    "Chora",
+    "Fallujah",
+    "Fool's Road",
+    "Goose Bay",
+    "Gorodok",
+    "Harju",
+    "Kamdesh Highlands",
+    "Kohat Toi",
+    "Kokan",
+    "Lashkar Valley",
+    "Logar Valley",
+    "Manicouagan",
+    "Mestia",
+    "Mutaha",
+    "Narva",
+    "Pacific Proving Grounds",
+    "Sanxian Islands",
+    "Skorpo",
+    "Sumari Bala",
+    "Tallil Outskirts",
+    "Yehorivka"
+  ],
+  "homepageMapCards": 26,
+  "mapsWithoutLayerLists": [
+    "Jensen's Range"
+  ],
+  "sourceLayers": 86,
+  "aasLayers": 46,
+  "raasLayers": 40,
+  "lineupCount": 10004,
+  "unresolvedCount": 0,
+  "gaps": [],
+  "changes": {
+    "addedLineups": [],
+    "removedLineups": [],
+    "changedLineups": []
+  }
+}

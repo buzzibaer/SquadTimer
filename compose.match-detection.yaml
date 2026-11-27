@@ -1,0 +1,14 @@
+services:
+  squadtimer:
+    depends_on:
+      - match-watcher
+  match-watcher:
+    image: python:3.12-alpine
+    working_dir: /watcher
+    command: ["python", "server.py"]
+    environment:
+      SQUAD_LOG_DIR: /logs
+    volumes:
+      - ./watcher:/watcher:ro
+      - ${LOCALAPPDATA}/SquadGame/Saved/Logs:/logs:ro
+    restart: unless-stopped

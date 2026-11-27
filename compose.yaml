@@ -1,0 +1,13 @@
+services:
+  squadtimer:
+    build: .
+    ports:
+      - "127.0.0.1:${SQUADTIMER_PORT:-8080}:80"
+    restart: unless-stopped
+  squadmaps-updater:
+    image: node:22-alpine
+    profiles: ["squadmaps-update"]
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: ["node", "scripts/import-squadmaps.js"]

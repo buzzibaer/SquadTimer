@@ -1,0 +1,15 @@
+{
+  "map": "Anvil",
+  "layer": "RAAS V1",
+  "mode": "RAAS",
+  "team": 2,
+  "faction": "GFI",
+  "unit": "Armored",
+  "status": "fixture",
+  "classCoverage": { "MBT": "known", "MGS": "known-empty", "IFV": "known" },
+  "models": [
+    { "id": "t72s", "name": "T-72S", "vehicleClass": "MBT", "count": 1, "firstSpawnMinutes": 0, "respawnMinutes": 20 },
+    { "id": "t62", "name": "T-62", "vehicleClass": "MBT", "count": 2, "firstSpawnMinutes": 10, "respawnMinutes": 20 },
+    { "id": "bmp1", "name": "BMP-1", "vehicleClass": "IFV", "count": 2, "firstSpawnMinutes": 0, "respawnMinutes": 10 }
+  ]
+}
