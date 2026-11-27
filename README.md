@@ -10,22 +10,32 @@ SquadTimer wurde mit KI-Unterstützung entwickelt.
 
 ## Architektur und Funktionsweise
 
+**SquadTimer funktioniert nach dem Download und Entpacken des Windows-Pakets auch ohne Internet.** Die Docker-Images und der Fahrzeugkatalog sind bereits im ZIP enthalten. Kartenauswahl, Timer, Meldungsverlauf und automatische Match-Erkennung laufen lokal. **SquadMaps wird beim Spielen nicht abgefragt.** Ins Internet geht es für den Release-Download, den separaten Katalogabruf oder wenn du den Link „SquadMaps öffnen“ anklickst. Die Oberfläche kann außerdem Webfonts laden; ohne Internet verwendet sie Ersatzschriften. Das Multiplayer-Spiel selbst verbindet sich unabhängig davon mit seinem Spielserver.
+
+### Beim Spielen: alles auf deinem PC
+
 ```text
-SquadMaps → Katalog-Updater → Fahrzeugkatalog → Vite-Build → NGINX → Browser
-Squad-Clientlog → optionaler Python-Logleser → /api/status ────────→ Browser
-                                                                     ↕
-                                                              Lokale Rundendaten
+App-Container mit Fahrzeugkatalog → http://127.0.0.1:8080 → Browser
+Squad-Clientlog → optionaler Logleser → lokale /api/status → Browser
+Browser ↔ lokale Rundendaten (localStorage)
 ```
 
 | Baustein | Aufgabe |
 | --- | --- |
-| [Web-App](src/main.ts) | TypeScript-Oberfläche für die Rundenauswahl, den Fahrzeugstatus und die manuelle Erfassung von Abschüssen. Docker baut die statische App mit Vite und liefert sie über NGINX aus. |
+| [Web-App](src/main.ts) | Der App-Container liefert die bereits gebaute TypeScript-Web-App samt Fahrzeugkatalog über NGINX an den Browser auf demselben PC aus. |
 | [Timerlogik](src/tracker.ts) und [Rundenspeicher](src/storage.ts) | Die Runde speichert eine Kopie der gewählten Fahrzeugaufstellung, den Zeitbezug und die Abschussmeldungen im Browser (`localStorage`). Die Timerlogik berechnet aus den absoluten Zeitpunkten, was jetzt noch aussteht. Ein Katalogupdate ändert keine gespeicherte Runde. |
-| [Katalog-Updater](scripts/import-squadmaps.js) | Liest Fahrzeugdaten für AAS und RAAS aus SquadMaps, prüft sie und schreibt den Offline-Katalog. Ein neuer App-Build übernimmt den Katalog. Beim Spielen fragt der Browser SquadMaps dafür nicht ab. |
 | [Optionaler Logleser](watcher/server.py) | Liest das lokale Squad-Clientlog und liefert der App über `/api/status` erkannte Layer und Statusinformationen. Die App schlägt den Layer vor; die gegnerische Aufstellung und der Rundenstart werden weiterhin manuell bestätigt. |
 | [Service Worker](public/sw.js) | Speichert die gebauten App-Dateien samt Fahrzeugkatalog für die Offline-Nutzung. Der optionale Live-Status wird nicht gecacht. |
 
 **So entstehen die Timer:** Du wählst vor der Runde Karte, Layer und gegnerische Aufstellung. Beim Einstieg **ab Staging-Ende** berechnet die App die Erstspawns aus dem angegebenen Zeitpunkt. Beim **Beitritt zu einer laufenden Runde** bleibt die Ausgangslage unbekannt; eine optional nachgetragene Staging-Endzeit hilft nur bei noch ausstehenden Erstspawns. Jeder gültige gemeldete Abschuss bekommt einen eigenen Respawn-Timer. Ist der Fahrzeugtyp unbekannt, zeigt die App mögliche Zeiten in derselben Zeile und bei Bedarf eine Spanne für die verfügbare Anzahl. Abgelaufene Meldungen wandern in den Verlauf und bleiben korrigierbar.
+
+### Nur beim Katalogupdate: Abruf von SquadMaps
+
+```text
+SquadMaps → Katalog-Updater → geprüfte lokale JSON-Datei → neuer App-Build
+```
+
+Der [Katalog-Updater](scripts/import-squadmaps.js) wird separat gestartet. Er lädt AAS- und RAAS-Fahrzeugdaten von SquadMaps, prüft sie und schreibt den lokalen Katalog. Erst ein neuer App-Build übernimmt diese Daten. Bis dahin nutzt SquadTimer die vorhandene Version. Die [Update-Befehle](#katalog-und-grenzen) sind für Entwickler; Anwender bekommen den aktualisierten Katalog mit einem neuen Windows-Paket.
 
 ## Start
 
@@ -34,7 +44,7 @@ npm install
 npm run dev
 ```
 
-Tests: `npm test`; Produktionsdateien: `npm run build`, danach `npm run preview`. Installation und Service Worker benötigen HTTPS auf gehosteten Seiten; `localhost` ist für Entwicklung ausgenommen. Offline-Nutzung steht nach erfolgreichem ersten Online-Laden zur Verfügung. Daten verbleiben im Browser dieses Geräts; Browserdaten löschen entfernt auch die Runde.
+Tests: `npm test`; Produktionsdateien: `npm run build`, danach `npm run preview`. Installation und Service Worker benötigen HTTPS auf gehosteten Seiten; lokale Loopback-Adressen sind ausgenommen. Der Service Worker legt seinen Cache beim ersten erfolgreichen Laden an; vom lokalen Docker-Container geht das auch ohne Internet. Daten verbleiben im Browser dieses Geräts; Browserdaten löschen entfernt auch die Runde.
 
 ## Lokaler Docker-Test
 
