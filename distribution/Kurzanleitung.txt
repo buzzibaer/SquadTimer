@@ -1,0 +1,23 @@
+SquadTimer für Windows – Kurzanleitung
+
+Voraussetzung: Docker Desktop für Windows (Linux-Container) installieren und starten.
+SquadTimer läuft nur auf diesem PC und ist unter http://127.0.0.1:8080 erreichbar.
+
+1. ZIP in einen beliebigen Ordner entpacken.
+2. „SquadTimer starten.cmd“ doppelklicken. Beim ersten Start importiert Docker
+   die mitgelieferten Images. Eine GitHub-Anmeldung ist dafür nicht nötig.
+3. Ist der Squad-Logordner vorhanden, startet die Match-Erkennung automatisch.
+   Andernfalls läuft die App manuell; beim nächsten Start wird erneut geprüft.
+4. Zum Beenden „SquadTimer stoppen.cmd“ doppelklicken.
+
+Bei privaten Test-Releases brauchst du Zugriff auf beide GitHub-Pakete.
+Melde Docker einmal bei ghcr.io an, bevor du den Starter verwendest:
+`docker login ghcr.io` (GitHub-Benutzername und ein Token mit `read:packages`).
+
+Die optionale Erkennung liest SquadGame.log nur lesend aus
+%LOCALAPPDATA%\SquadGame\Saved\Logs. Ist der Ordner vorhanden, der Log aber noch
+nicht, wartet die Erkennung auf die Datei. Ohne Erkennung Layer manuell wählen.
+
+Port 8080 muss frei sein. Die App bindet ausschließlich an 127.0.0.1 und ist
+nicht im Netzwerk erreichbar. Zum Aktualisieren die neue ZIP in einen neuen
+Ordner entpacken; die Erkennung wird bei jedem Start automatisch geprüft.

@@ -1,0 +1,8 @@
+@echo off
+setlocal
+powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0stop.ps1"
+if errorlevel 1 (
+  echo.
+  echo SquadTimer konnte nicht beendet werden. Details siehe oben.
+  pause
+)

@@ -1,0 +1,19 @@
+services:
+  squadtimer:
+    image: ghcr.io/buzzibaer/squadtimer:${SQUADTIMER_VERSION}
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped
+  match-watcher:
+    profiles: [watcher]
+    image: ghcr.io/buzzibaer/squadtimer-watcher:${SQUADTIMER_VERSION}
+    environment:
+      SQUAD_LOG_DIR: /logs
+    volumes:
+      - type: bind
+        source: ${SQUADTIMER_LOG_DIR:-./unused-logs}
+        target: /logs
+        read_only: true
+        bind:
+          create_host_path: false
+    restart: unless-stopped

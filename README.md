@@ -1,8 +1,27 @@
 # SquadTimer V1
 
-German, installierbare PWA für manuelle Fahrzeug-Abschussmeldungen. Keine Spielintegration, kein Backend, keine Push-Meldungen. Die Runde wird lokal gespeichert und arbeitet mit festen absoluten Zeitpunkten.
+SquadTimer ist eine deutschsprachige, installierbare Web-App für Handy, Tablet und PC. Sie zeigt, wann gegnerische Fahrzeuge in Squad erstmals spawnen oder nach einem gemeldeten Abschuss wieder verfügbar sein könnten.
 
 SquadTimer wurde mit KI-Unterstützung entwickelt.
+
+## Architektur und Funktionsweise
+
+```text
+SquadMaps → Katalog-Updater → Fahrzeugkatalog → Vite-Build → NGINX → Browser
+Squad-Clientlog → optionaler Python-Logleser → /api/status ────────→ Browser
+                                                                     ↕
+                                                              Lokale Rundendaten
+```
+
+| Baustein | Aufgabe |
+| --- | --- |
+| [Web-App](src/main.ts) | TypeScript-Oberfläche für die Rundenauswahl, den Fahrzeugstatus und die manuelle Erfassung von Abschüssen. Docker baut die statische App mit Vite und liefert sie über NGINX aus. |
+| [Timerlogik](src/tracker.ts) und [Rundenspeicher](src/storage.ts) | Die Runde speichert eine Kopie der gewählten Fahrzeugaufstellung, den Zeitbezug und die Abschussmeldungen im Browser (`localStorage`). Die Timerlogik berechnet aus den absoluten Zeitpunkten, was jetzt noch aussteht. Ein Katalogupdate ändert keine gespeicherte Runde. |
+| [Katalog-Updater](scripts/import-squadmaps.js) | Liest Fahrzeugdaten für AAS und RAAS aus SquadMaps, prüft sie und schreibt den Offline-Katalog. Ein neuer App-Build übernimmt den Katalog. Beim Spielen fragt der Browser SquadMaps dafür nicht ab. |
+| [Optionaler Logleser](watcher/server.py) | Liest das lokale Squad-Clientlog und liefert der App über `/api/status` erkannte Layer und Statusinformationen. Die App schlägt den Layer vor; die gegnerische Aufstellung und der Rundenstart werden weiterhin manuell bestätigt. |
+| [Service Worker](public/sw.js) | Speichert die gebauten App-Dateien samt Fahrzeugkatalog für die Offline-Nutzung. Der optionale Live-Status wird nicht gecacht. |
+
+**So entstehen die Timer:** Du wählst vor der Runde Karte, Layer und gegnerische Aufstellung. Beim Einstieg **ab Staging-Ende** berechnet die App die Erstspawns aus dem angegebenen Zeitpunkt. Beim **Beitritt zu einer laufenden Runde** bleibt die Ausgangslage unbekannt; eine optional nachgetragene Staging-Endzeit hilft nur bei noch ausstehenden Erstspawns. Jeder gültige gemeldete Abschuss bekommt einen eigenen Respawn-Timer. Ist der Fahrzeugtyp unbekannt, zeigt die App mögliche Zeiten in derselben Zeile und bei Bedarf eine Spanne für die verfügbare Anzahl. Abgelaufene Meldungen wandern in den Verlauf und bleiben korrigierbar.
 
 ## Start
 
@@ -38,7 +57,7 @@ Das ist ein lokaler HTTP-Test. Installation und Service Worker funktionieren auf
 
 ## Optionale lokale Match-Erkennung (Windows)
 
-Standardmäßig ist keine Log-Datei eingebunden und es läuft kein Erkennungsdienst. Optional kann ein read-only Watcher die Squad-Client-Logs lokal lesen. Er erkennt einen Layer erst nach abgeschlossenem `SeamlessTravel` und liefert ausschließlich normalisierten Layer, Verbindungsstatus, Ereignis-ID und Zeitstempel an die App unter demselben Ursprung. Es werden keine Discord-Daten, Spielprozesse, IP-/Kontodaten, Rohzeilen oder Telemetrie gelesen/übertragen. Die Erkennung liefert **keine Fahrzeugdaten**. Team, Fraktion, Einheit und „Staging beendet“ bleiben manuell zu prüfen/setzen.
+Standardmäßig ist keine Logdatei eingebunden und es läuft kein Erkennungsdienst. Der optionale Logleser erkennt den Layer beim Beitritt oder nach abgeschlossenem Kartenwechsel (`SeamlessTravel`). Er gibt nur normalisierte Felder weiter: Layer, Verbindungsstatus, Ereignis-ID und Zeitstempel sowie, wenn erkennbar, Abstimmungs- oder Ladephase und Spielversion. Die Rohzeilen bleiben lokal. Die Erkennung liefert **keine Fahrzeugdaten**. Team, Fraktion, Einheit und „Staging beendet“ bleiben manuell zu prüfen oder zu setzen.
 
 In PowerShell im Projektverzeichnis:
 
@@ -53,7 +72,7 @@ Der Watcher mountet nur `$env:LOCALAPPDATA\SquadGame\Saved\Logs` und ausschließ
 docker compose -f compose.yaml -f compose.match-detection.yaml down
 ```
 
-Der erste beobachtete Dateistand wird bis Dateiende übersprungen; ältere Log-Sitzungen werden damit nicht als live angeboten. Dateiersetzung/-kürzung setzt die Parser-Sitzung zurück. Der Parser wurde mit synthetischen Beispielen für RAAS und AAS geprüft; eine echte AAS-Logzeile und ein Live-Test auf dem Ziel-PC stehen aus. Erkannte Layer können im vorhandenen Katalog fehlen; in diesem Fall zeigt die App unbekannte Fahrzeugdaten und startet keine Fahrzeug-Timer.
+Beim Start liest der Logleser den vorhandenen Inhalt von `SquadGame.log`, meldet daraus aber erst einen Live-Status, wenn die Datei weitergeschrieben wird. Er ignoriert Sicherungslogs. Wird die Datei ersetzt oder gekürzt, setzt er den bisherigen Status zurück. Fehlt eine Fahrzeugaufstellung im Katalog, meldet die App das ausdrücklich und startet dafür keine Fahrzeug-Timer.
 
 ## Katalog und Grenzen
 
@@ -80,3 +99,11 @@ Die Erstspawn-Zeiten verwenden die manuell erfasste Staging-Endzeit als Nullpunk
 ## Timer-Piktogramme
 
 Die drei lokalen Fahrzeug-Piktogramme (`Tank_vehicle_icon.webp`, `Mgs_vehicle_icon.webp`, `Trackedifv_vehicle_icon.webp`) wurden vom Nutzer bereitgestellt und werden von Vite inline in das App-Bundle eingebettet, damit sie auch nach einem Kaltstart offline verfügbar sind. Zuordnung: MBT → Tank, MGS → Mgs, IFV → Trackedifv. Die Herkunft als Squad-Bildmaterial ist bekannt; Lizenz- und Weitergaberechte wurden nicht verifiziert. Diese Dokumentation stellt keine Rechtefreigabe dar.
+
+## Windows-Benutzerpaket
+
+Für den lokalen PC-Betrieb gibt es ein ZIP ohne Quellcode-, Node- oder Build-Abhängigkeit: Docker Desktop (Linux-Container) ist die einzige Voraussetzung. ZIP entpacken und `SquadTimer starten.cmd` ausführen; die App öffnet nach dem Start unter <http://127.0.0.1:8080>. `SquadTimer stoppen.cmd` beendet ausschließlich den benannten SquadTimer-Release-Stack. Ist `%LOCALAPPDATA%\SquadGame\Saved\Logs` vorhanden, startet die optionale Match-Erkennung automatisch und bindet diesen Ordner nur lesend ein. Fehlt der Ordner, läuft die App manuell und prüft beim nächsten Start erneut.
+
+Der [öffentliche Windows-Download](https://github.com/buzzibaer/SquadTimer-Releases/releases) enthält beide Docker-Images. Der Starter importiert sie bei Bedarf direkt aus dem Paket; dafür ist keine GitHub-Anmeldung nötig. Das Quellcode-Repository bleibt privat.
+
+Für einen lokalen Build des ZIPs mit mitgelieferten Images zuerst App und Logleser mit den in `distribution/compose.yaml` angegebenen Image-Namen und der gewünschten Version bauen. Dann `scripts/package-windows.ps1 -Version 0.1.0 -IncludeImages` ausführen. Der manuelle Workflow „Build and publish release images“ ist für separate, registrygestützte Releases im Quellcode-Repository gedacht. Paketerstellung prüfen: `py -3 -m unittest tests.test_windows_package -v`.
